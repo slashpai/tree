@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -28,5 +30,18 @@ func main() {
 
 func tree(path string) error {
 	fmt.Println(path)
+	err := filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			fmt.Printf("prevent panic by handling failure accessing a path %q: %v\n", path, err)
+			return err
+		}
+		fmt.Printf("%q", path)
+		return nil
+	})
+	if err != nil {
+		fmt.Printf("error walking the path %v\n", err)
+		return err
+	}
+
 	return nil
 }
